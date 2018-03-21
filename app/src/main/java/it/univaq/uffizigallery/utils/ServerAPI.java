@@ -4,8 +4,33 @@ package it.univaq.uffizigallery.utils;
  * Created by Riccardo on 20/03/2018.
  */
 
-public class Server_API_Connection {
-/*
+import org.codehaus.jackson.map.ObjectMapper;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
+import java.io.StringWriter;
+import java.io.Writer;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import it.univaq.uffizigallery.model.Checkpoint;
+import it.univaq.uffizigallery.model.Ticket;
+
+public class ServerAPI {
+
+    CheckpointService checkpointservice;
+    TicketService ticketservice;
+
+    public ServerAPI(){
+        this.checkpointservice = new CheckpointService();
+    }
+
     @RequestMapping(value = { "/checkpoint/get" }, method = { RequestMethod.GET, RequestMethod.POST }, produces = {"application/json" })
     @ResponseBody
     public String getCheckpointActive() throws IOException, JSONException {
@@ -51,5 +76,5 @@ public class Server_API_Connection {
         this.ticketservice.insert(ticket);
         final int childize = checkpoint.getChildsize() + 1;
         return "{childsize:" + childize + ", error:0}";
-    }*/
+    }
 }
