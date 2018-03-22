@@ -29,6 +29,7 @@ public class ServerAPI {
 
     public ServerAPI(){
         this.checkpointservice = new CheckpointService();
+        this.ticketservice = new TicketService();
     }
 
     @RequestMapping(value = { "/checkpoint/get" }, method = { RequestMethod.GET, RequestMethod.POST }, produces = {"application/json" })
