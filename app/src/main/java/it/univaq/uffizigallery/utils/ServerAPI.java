@@ -74,7 +74,7 @@ public class ServerAPI {
         ticket.setLongitude(longitude);
         ticket.setAccuracy(accuracy);
         this.ticketservice.insert(ticket);
-        final int childize = checkpoint.getChildsize() + 1;
+        final long childize = checkpoint.getChildsize() + 1;
         return "{childsize:" + childize + ", error:0}";
     }
 }
