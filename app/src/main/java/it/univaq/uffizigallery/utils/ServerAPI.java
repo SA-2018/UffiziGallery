@@ -24,8 +24,8 @@ import it.univaq.uffizigallery.model.Ticket;
 
 public class ServerAPI {
 
-    CheckpointService checkpointservice;
-    TicketService ticketservice;
+    private CheckpointService checkpointservice;
+    private TicketService ticketservice;
 
     public ServerAPI(){
         this.checkpointservice = new CheckpointService();
