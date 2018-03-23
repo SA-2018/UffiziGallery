@@ -56,9 +56,6 @@ public class ConnectionFromServer extends AsyncTask<String, Integer, String> {
                         stringBuilder.append(stringBuffer);
                     }
 
-
-
-
                 } finally {
                     connection.disconnect();
                 }
@@ -67,7 +64,10 @@ public class ConnectionFromServer extends AsyncTask<String, Integer, String> {
                 e1.printStackTrace();
             }
 
-            return stringBuilder.toString();
+            if(stringBuilder == null)
+                return null;
+            else
+                return stringBuilder.toString();
 
     }
 

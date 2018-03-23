@@ -8,7 +8,7 @@ import it.univaq.uffizigallery.model.Ticket;
 
 public class TicketService {
 
-    public void insert(Ticket ticket){
+    public static void insert(Ticket ticket){
         //da implementare
     }
 
