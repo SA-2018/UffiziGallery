@@ -9,7 +9,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import java.util.concurrent.ExecutionException;
 
 import it.univaq.uffizigallery.model.Checkpoint;
@@ -20,7 +19,7 @@ import it.univaq.uffizigallery.model.Checkpoint;
 
 public class CheckpointService {
 
-    public static Object findActive(){
+    public Object findActive(){
 
         ConnectionFromServer fromServer = new ConnectionFromServer();
         fromServer.execute();
@@ -40,7 +39,7 @@ public class CheckpointService {
 
     }
 
-    public static Checkpoint find(long id_checkpoint){
+    public Checkpoint find(long id_checkpoint){
         //manca implementazione
         return null;
     }

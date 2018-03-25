@@ -8,19 +8,16 @@ import android.support.v4.content.LocalBroadcastManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.util.ArrayList;
 import java.util.List;
 
+import it.univaq.uffizigallery.MainActivity;
 import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.utils.CheckpointService;
 import it.univaq.uffizigallery.utils.ServerAPI;
-
-import it.univaq.uffizigallery.MainActivity;
 
 /**
  * Created by Riccardo on 25/03/2018.
@@ -54,9 +51,10 @@ public class Services extends IntentService {
         Intent intent = new Intent(MainActivity.ACTION_SERVICE_COMPLETED);
 
             try {
-
                 ServerAPI fromServer = new ServerAPI();
                 List<Checkpoint> checkpoints = CheckpointService.JSONtoCheckpointList(fromServer.getCheckpointActive());
+
+                //from checkpoint list to JSON checkpoint list
 
                 final ObjectMapper objectMapper = new ObjectMapper();
                 final StringWriter stringWriter = new StringWriter();

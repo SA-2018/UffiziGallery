@@ -10,6 +10,7 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.design.widget.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -21,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String ACTION_SERVICE_COMPLETED = "action_service_completed";
 
     private RecyclerView recyclerView;
+    private ProgressDialog progress;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -31,6 +33,9 @@ public class MainActivity extends AppCompatActivity {
             switch (intent.getAction()){
                 case ACTION_SERVICE_COMPLETED:
 
+                    //download completed, dismissing progress dialog
+                    progress.dismiss();
+
                     if(intent.getBooleanExtra("success", true)){
                         String data = intent.getStringExtra("data");
 
@@ -39,6 +44,11 @@ public class MainActivity extends AppCompatActivity {
                                 JSONArray array = new JSONArray(data);
                                 Adapter adapter = new Adapter(array);
                                 recyclerView.setAdapter(adapter);
+
+                                //snackbar creation
+                                Snackbar snackbar = Snackbar.make(findViewById(R.id.main_constraintlayout), "Download checkpoint completato", Snackbar.LENGTH_LONG);
+                                snackbar.show();
+
                             } catch (JSONException e) {
                                 e.printStackTrace();
                             }
@@ -65,29 +75,27 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-/*
-        ProgressDialog progress = new ProgressDialog(this);
+
+        //progress dialog
+        progress = new ProgressDialog(this);
         progress.setTitle("yolo");
         progress.setMessage("Canchero ");
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setCancelable(false);
         progress.setIndeterminate(true);
-        progress.show();*/
+        progress.show();
+
+        //preparing to download
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SERVICE_COMPLETED);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
 
-        // Download
+        // download action
 
         Intent intent = new Intent(getApplicationContext(), Services.class);
         intent.setAction(Services.ACTION_DOWNLOAD);
         startService(intent);
-
-        //progress.dismiss();
-
-
-
 
     }
 

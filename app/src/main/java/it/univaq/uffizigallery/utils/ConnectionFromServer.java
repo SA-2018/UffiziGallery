@@ -2,8 +2,6 @@ package it.univaq.uffizigallery.utils;
 
 import android.os.AsyncTask;
 
-import org.json.JSONException;
-
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
