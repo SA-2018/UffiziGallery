@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">UffiziGallery</string>
+    <string name="button1">SCAN</string>
+    <string name="button2">STATUS</string>
+    <string name="pre_scan">PRE SCAN</string>
 </resources>

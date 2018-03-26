@@ -62,12 +62,10 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
 
         @Override
         public void onClick(View v) {
-            /*
-            JSONObject city = data.optJSONObject(getAdapterPosition());
-
-            Intent intent = new Intent(v.getContext(), MapsActivity.class);
-            intent.putExtra("data", city.toString());
-            v.getContext().startActivity(intent);*/
+            JSONObject checkpoint = data.optJSONObject(getAdapterPosition());
+            Intent intent = new Intent(v.getContext(), pre_scan.class);
+            intent.putExtra("data", checkpoint.toString());
+            v.getContext().startActivity(intent);
         }
     }
 }

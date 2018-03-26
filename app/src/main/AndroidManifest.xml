@@ -20,7 +20,9 @@
         </activity>
 
         <service android:name=".services.Services" android:exported="false" />
-
+        <activity
+            android:name=".pre_scan"
+            android:label="@string/pre_scan"></activity>
     </application>
 
 </manifest>
