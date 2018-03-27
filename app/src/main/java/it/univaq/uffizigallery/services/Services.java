@@ -16,7 +16,6 @@ import java.util.List;
 
 import it.univaq.uffizigallery.MainActivity;
 import it.univaq.uffizigallery.model.Checkpoint;
-import it.univaq.uffizigallery.utils.CheckpointService;
 import it.univaq.uffizigallery.utils.ServerAPI;
 
 /**

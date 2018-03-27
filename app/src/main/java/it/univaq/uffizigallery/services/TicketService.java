@@ -1,4 +1,4 @@
-package it.univaq.uffizigallery.utils;
+package it.univaq.uffizigallery.services;
 
 import it.univaq.uffizigallery.model.Ticket;
 

@@ -21,7 +21,7 @@
 
         <service android:name=".services.Services" android:exported="false" />
         <activity
-            android:name=".pre_scan"
+            android:name=".CheckpointHubActivity"
             android:label="@string/pre_scan"></activity>
     </application>
 

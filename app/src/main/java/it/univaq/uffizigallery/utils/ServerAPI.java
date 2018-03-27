@@ -21,6 +21,8 @@ import java.util.Map;
 
 import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.model.Ticket;
+import it.univaq.uffizigallery.services.CheckpointService;
+import it.univaq.uffizigallery.services.TicketService;
 
 public class ServerAPI {
 

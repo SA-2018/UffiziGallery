@@ -1,4 +1,4 @@
-package it.univaq.uffizigallery.utils;
+package it.univaq.uffizigallery.services;
 
 
 import org.codehaus.jackson.map.ObjectMapper;
@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutionException;
 
 import it.univaq.uffizigallery.model.Checkpoint;
+import it.univaq.uffizigallery.utils.ConnectionFromServer;
 
 /**
  * Created by Riccardo on 21/03/2018.
