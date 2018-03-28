@@ -117,6 +117,9 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         boolean isConnected = activeNetwork != null &&
                 activeNetwork.isConnectedOrConnecting();
 
+        //progress dialog
+        progress = new ProgressDialog(this);
+
         if(!isConnected){
             //snackbar creation
             Snackbar snackbar = Snackbar.make(findViewById(R.id.main_constraintlayout), "No Internet connection", Snackbar.LENGTH_LONG);
@@ -125,8 +128,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             return;
         }
 
-        //progress dialog
-        progress = new ProgressDialog(this);
+        //progress setting
         //progress.setTitle("yolo");
         progress.setMessage("Download checkpoint...");
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
