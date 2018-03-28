@@ -168,6 +168,8 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
             Snackbar snackbar = Snackbar.make(findViewById(R.id.main_constraintlayout), "No Internet connection", Snackbar.LENGTH_LONG);
             snackbar.show();
 
+            mSwipeRefreshLayout.setRefreshing(false);
+
             return;
         }
 
