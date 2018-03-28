@@ -40,7 +40,7 @@ public class CameraTestActivity extends Activity
     private ZBarAPI mPreview;
     private Handler autoFocusHandler;
 
-    TextView scanText;
+    //TextView scanText;
     Button scanButton;
 
     ImageScanner scanner;
@@ -71,7 +71,7 @@ public class CameraTestActivity extends Activity
         FrameLayout preview = (FrameLayout)findViewById(R.id.cameraPreview);
         preview.addView(mPreview);
 
-        scanText = (TextView)findViewById(R.id.scanText);
+        //scanText = (TextView)findViewById(R.id.scanText);
 
         scanButton = (Button)findViewById(R.id.ScanButton);
 
@@ -79,7 +79,7 @@ public class CameraTestActivity extends Activity
             public void onClick(View v) {
                 if (barcodeScanned) {
                     barcodeScanned = false;
-                    scanText.setText("Scanning...");
+                    //scanText.setText("Scanning...");
                     mCamera.setPreviewCallback(previewCb);
                     mCamera.startPreview();
                     previewing = true;
@@ -137,7 +137,7 @@ public class CameraTestActivity extends Activity
 
                 SymbolSet syms = scanner.getResults();
                 for (Symbol sym : syms) {
-                    scanText.setText("barcode result " + sym.getData());
+                    //scanText.setText("barcode result " + sym.getData());
                     barcodeScanned = true;
                 }
             }
