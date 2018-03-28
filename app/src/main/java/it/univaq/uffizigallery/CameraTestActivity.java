@@ -4,12 +4,15 @@ package it.univaq.uffizigallery;
  * Created by valen on 27/03/2018.
  */
 
+import it.univaq.uffizigallery.services.Services;
 import it.univaq.uffizigallery.utils.ZBarAPI;
 
 import android.app.Activity;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 
 import android.view.View;
@@ -26,6 +29,7 @@ import android.hardware.Camera.Size;
 
 import android.widget.TextView;
 import android.graphics.ImageFormat;
+import android.widget.Toast;
 
 /* Import ZBar Class files */
 import net.sourceforge.zbar.ImageScanner;
@@ -34,7 +38,7 @@ import net.sourceforge.zbar.Symbol;
 import net.sourceforge.zbar.SymbolSet;
 import net.sourceforge.zbar.Config;
 
-public class CameraTestActivity extends Activity
+public class CameraTestActivity extends AppCompatActivity
 {
     private Camera mCamera;
     private ZBarAPI mPreview;
@@ -137,6 +141,14 @@ public class CameraTestActivity extends Activity
 
                 SymbolSet syms = scanner.getResults();
                 for (Symbol sym : syms) {
+                    //intent for Services
+                    Intent intent = new Intent(getApplicationContext(), Services.class);
+                    intent.setAction(Services.ACTION_READ_BARCODE_COMPLETED);
+                    intent.putExtra("data", sym.getData());
+                    startService(intent);
+
+                    Toast.makeText(getApplicationContext(), "Sending barcode..." , Toast.LENGTH_SHORT).show();
+
                     //scanText.setText("barcode result " + sym.getData());
                     barcodeScanned = true;
                 }

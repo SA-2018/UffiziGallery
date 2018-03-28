@@ -25,6 +25,7 @@ import it.univaq.uffizigallery.utils.ServerAPI;
 public class Services extends IntentService {
 
     public static final String ACTION_DOWNLOAD =  "action_download";
+    public static final String ACTION_READ_BARCODE_COMPLETED = "action_read_barcode_completed";
 
     private static final String NAME = Services.class.getSimpleName();
 
@@ -40,6 +41,10 @@ public class Services extends IntentService {
             switch (action) {
                 case ACTION_DOWNLOAD:
                     download();
+                    break;
+
+                case ACTION_READ_BARCODE_COMPLETED:
+                    read_barcode_completed(intent);
                     break;
             }
         }
@@ -78,6 +83,13 @@ public class Services extends IntentService {
             }
 
         LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
+
+    }
+
+    // Todo : callback function on read barcode completed
+    private void read_barcode_completed(Intent intent){
+
+        String barcode_data = intent.getStringExtra("data");
 
     }
 }
