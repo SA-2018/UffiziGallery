@@ -17,6 +17,7 @@ public class Ticket {
     private double latitude;
     private double longitude;
     private double accuracy;
+    private Checkpoint checkpoint;
 
 
     // BUILDERS
@@ -33,9 +34,10 @@ public class Ticket {
         this.latitude = 0;
         this.longitude = 0;
         this.accuracy = 0;
+        this.checkpoint = null;
     }
 
-    public Ticket(String in_out, String tipo, long id_checkpoint, long childsize, String barcode, String dev_imei, String dev_name, String time, double latitude, double longitude, double accuracy){
+    public Ticket(String in_out, String tipo, long id_checkpoint, long childsize, String barcode, String dev_imei, String dev_name, String time, double latitude, double longitude, double accuracy, Checkpoint checkpoint){
         this.in_out = in_out;
         this.tipo = tipo;
         this.id_checkpoint = id_checkpoint;
@@ -47,6 +49,14 @@ public class Ticket {
         this.latitude = latitude;
         this.longitude = longitude;
         this.accuracy = accuracy;
+        this.checkpoint = checkpoint;
+    }
+
+    public Ticket(String in_out, String barcode, String dev_name, String dev_imei){
+        this.in_out = in_out;
+        this.barcode = barcode;
+        this.dev_name = dev_name;
+        this.dev_imei = dev_imei;
     }
 
 
@@ -94,6 +104,8 @@ public class Ticket {
 
     public double getAccuracy(){ return this.accuracy; }
 
+    public Checkpoint getCheckpoint(){ return this.checkpoint; }
+
 
     //SET METHODS
 
@@ -138,5 +150,7 @@ public class Ticket {
     public void setAccuracy(double accuracy){
         this.accuracy = accuracy;
     }
+
+    public void setCheckpoint(Checkpoint checkpoint){ this.checkpoint = checkpoint; }
 
 }

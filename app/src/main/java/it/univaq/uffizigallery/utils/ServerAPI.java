@@ -51,18 +51,18 @@ public class ServerAPI {
     @ResponseBody
     public String ticketAdd(@RequestParam final String json) throws IOException, JSONException {
         final JSONObject obj = new JSONObject(json);
-        final String inout = obj.getString("in_out");
+        final String in_out = obj.getString("in_out");
         final String barcode = obj.getString("barcode");
         final String dev_name = obj.getString("device_name");
-        final String dev_id = obj.getString("device_imei");
+        final String dev_imei = obj.getString("device_imei");
         final String time = obj.getString("time");
         String type = obj.getString("type");
         final int id_checkpoint = obj.getInt("id_checkpoint");
         double latitude, longitude, accuracy;
         final Checkpoint checkpoint = this.checkpointservice.find((long) id_checkpoint);
-        final Ticket ticket = new Ticket(inout, barcode, dev_name, dev_id);
-        ticket.setType(type);
-        ticket.settime(time);
+        final Ticket ticket = new Ticket(in_out, barcode, dev_name, dev_imei);
+        ticket.setTipo(type);
+        ticket.setTime(time);
         ticket.setCheckpoint(checkpoint);
         try {
             latitude = obj.getDouble("lat");
