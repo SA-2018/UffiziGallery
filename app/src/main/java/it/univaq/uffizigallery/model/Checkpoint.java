@@ -15,6 +15,8 @@ public class Checkpoint {
     private String location;
 
 
+    // BUILDERS
+
     public Checkpoint(){
         this.id = 0;
         this.nome = "";
@@ -34,6 +36,7 @@ public class Checkpoint {
         this.childsize = childsize;
         this.location = location;
     }
+
 
     //GET METHODS
 
@@ -64,6 +67,7 @@ public class Checkpoint {
     public String getLocation(){
         return this.location;
     }
+
 
     //SET METHODS
 
