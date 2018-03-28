@@ -1,17 +1,23 @@
 package it.univaq.uffizigallery;
 
+import android.Manifest;
 import android.app.ProgressDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.pm.PackageManager;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.design.widget.Snackbar;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -79,12 +85,45 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 android.R.color.holo_green_dark,
                 android.R.color.holo_orange_dark,
                 android.R.color.holo_blue_dark);
+
+
+        // TODO : add location permission
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
+                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                != PackageManager.PERMISSION_GRANTED) {
+
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.INTERNET},
+                        PackageManager.PERMISSION_GRANTED);
+        }
+
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
+
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = null;
+        try {
+            activeNetwork = cm.getActiveNetworkInfo();
+        } catch (NullPointerException e1){
+            e1.printStackTrace();
+        }
+
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if(!isConnected){
+            //snackbar creation
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_constraintlayout), "No Internet connection", Snackbar.LENGTH_LONG);
+            snackbar.show();
+
+            return;
+        }
 
         //progress dialog
         progress = new ProgressDialog(this);
@@ -110,6 +149,27 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
     @Override
     public void onRefresh() {
+
+        ConnectivityManager cm =
+                (ConnectivityManager)this.getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        NetworkInfo activeNetwork = null;
+        try {
+            activeNetwork = cm.getActiveNetworkInfo();
+        } catch (NullPointerException e1){
+            e1.printStackTrace();
+        }
+
+        boolean isConnected = activeNetwork != null &&
+                activeNetwork.isConnectedOrConnecting();
+
+        if(!isConnected){
+            //snackbar creation
+            Snackbar snackbar = Snackbar.make(findViewById(R.id.main_constraintlayout), "No Internet connection", Snackbar.LENGTH_LONG);
+            snackbar.show();
+
+            return;
+        }
 
         //preparing to download
 
