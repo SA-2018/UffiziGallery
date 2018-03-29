@@ -89,14 +89,20 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         // TODO : add location permission
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
-                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET)
+                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) + ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                 != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA, Manifest.permission.INTERNET},
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION},
                         PackageManager.PERMISSION_GRANTED);
         }
 
+        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
+                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) + ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                != PackageManager.PERMISSION_GRANTED) {
+            this.finish();
+            System.exit(1);
+        }
     }
 
 

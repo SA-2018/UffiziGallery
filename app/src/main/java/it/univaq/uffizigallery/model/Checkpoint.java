@@ -1,5 +1,8 @@
 package it.univaq.uffizigallery.model;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 /**
  * Created by Riccardo on 21/03/2018.
  */
@@ -97,6 +100,43 @@ public class Checkpoint {
 
     public void setLocation(String location){
         this.location = location;
+    }
+
+    public static Checkpoint parseJSON(JSONObject json){
+
+        try {
+            Checkpoint checkpoint = new Checkpoint();
+            checkpoint.setId(json.getLong("id"));
+            checkpoint.setNome(json.getString("name"));
+            checkpoint.setIn_out(json.getString("in_out"));
+            checkpoint.setAttivo(json.getBoolean("attivo"));
+            checkpoint.setTipo(json.getString("tipo"));
+            checkpoint.setChildsize(json.getLong("childsize"));
+            checkpoint.setLocation(json.getString("location"));
+
+            return checkpoint;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public JSONObject toJSON(){
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("id", this.id);
+            json.put("nome", this.nome);
+            json.put("in_out", this.in_out);
+            json.put("attivo", this.attivo);
+            json.put("tipo", this.tipo);
+            json.put("childsize", this.childsize);
+            json.put("location", this.location);
+            return json;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 
 }

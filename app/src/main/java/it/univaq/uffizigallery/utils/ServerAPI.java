@@ -4,6 +4,8 @@ package it.univaq.uffizigallery.utils;
  * Created by Riccardo on 20/03/2018.
  */
 
+import android.content.Context;
+
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,7 +30,13 @@ public class ServerAPI {
 
     private CheckpointService checkpointservice;
     private TicketService ticketservice;
+    private Context context;
 
+    public ServerAPI(Context context){
+        this.context = context;
+        this.checkpointservice = new CheckpointService();
+        this.ticketservice = new TicketService(this.context);
+    }
     public ServerAPI(){
         this.checkpointservice = new CheckpointService();
         this.ticketservice = new TicketService();
@@ -65,8 +73,8 @@ public class ServerAPI {
         ticket.setTime(time);
         ticket.setCheckpoint(checkpoint);
         try {
-            latitude = obj.getDouble("lat");
-            longitude = obj.getDouble("lng");
+            latitude = obj.getDouble("latitude");
+            longitude = obj.getDouble("longitude");
             accuracy = obj.getDouble("accuracy");
         } catch(JSONException e) {
             latitude = 0;

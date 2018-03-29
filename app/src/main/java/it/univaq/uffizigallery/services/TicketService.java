@@ -1,5 +1,8 @@
 package it.univaq.uffizigallery.services;
 
+import android.content.Context;
+
+import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Ticket;
 
 /**
@@ -8,8 +11,16 @@ import it.univaq.uffizigallery.model.Ticket;
 
 public class TicketService {
 
-    public static void insert(Ticket ticket){
-        //da implementare
+    private Context context;
+    public TicketService(){
+        this.context = null;
+    }
+    public TicketService(Context context){
+    this.context = context;
+    }
+
+    public void insert(Ticket ticket){
+        DBHelper.get(this.context).save(ticket);
     }
 
 }

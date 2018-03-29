@@ -4,6 +4,7 @@ import android.app.IntentService;
 import android.content.Intent;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
+import android.widget.Toast;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
@@ -15,7 +16,9 @@ import java.io.Writer;
 import java.util.List;
 
 import it.univaq.uffizigallery.MainActivity;
+import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Checkpoint;
+import it.univaq.uffizigallery.model.Ticket;
 import it.univaq.uffizigallery.utils.ServerAPI;
 
 /**
@@ -89,7 +92,12 @@ public class Services extends IntentService {
     // Todo : callback function on read barcode completed
     private void read_barcode_completed(Intent intent){
 
-        String barcode_data = intent.getStringExtra("data");
+        String barcode_data = intent.getStringExtra("barcode");
+        Checkpoint checkpoint = CheckpointService.JSONtoCheckpoint(intent.getStringExtra("checkpoint"));
+
+
+
+
 
     }
 }

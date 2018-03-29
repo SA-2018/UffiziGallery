@@ -1,10 +1,19 @@
 package it.univaq.uffizigallery.model;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Riccardo on 21/03/2018.
  */
 
 public class Ticket {
+
+    private int id;
 
     private String in_out;
     private String tipo;
@@ -61,6 +70,7 @@ public class Ticket {
 
 
     //GET METHODS
+    public int getId() { return this.id; }
 
     public String getIn_out(){
         return this.in_out;
@@ -108,6 +118,7 @@ public class Ticket {
 
 
     //SET METHODS
+    public void setId(int id) { this.id=id; }
 
     public void setIn_out(String in_out){
         this.in_out = in_out;
@@ -152,5 +163,79 @@ public class Ticket {
     }
 
     public void setCheckpoint(Checkpoint checkpoint){ this.checkpoint = checkpoint; }
+
+    public JSONObject toJSON(){
+
+        try {
+            JSONObject json = new JSONObject();
+            json.put("in_out", this.in_out);
+            json.put("tipo", this.tipo);
+            json.put("id_checkpoint", this.id_checkpoint);
+            json.put("childsize", this.childsize);
+            json.put("barcode", this.barcode);
+            json.put("dev_imei", this.dev_imei);
+            json.put("dev_name", this.dev_name);
+            json.put("time", this.time);
+            json.put("latitude", this.latitude);
+            json.put("longitude", this.longitude);
+            json.put("accuracy", this.accuracy);
+            json.put("checkpoint", this.checkpoint);
+            return json;
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Ticket parseJSON(JSONObject json){
+
+        try {
+            Ticket ticket = new Ticket();
+            ticket.setIn_out(json.getString("in_out"));
+            ticket.setTipo(json.getString("tipo"));
+            ticket.setId_checkpoint(json.getLong("id_checkpoint"));
+            ticket.setChildsize(json.getLong("childsize"));
+            ticket.setBarcode(json.getString("barcode"));
+            ticket.setDev_imei(json.getString("dev_imei"));
+            ticket.setDev_name(json.getString("dev_name"));
+            ticket.setTime(json.getString("time"));
+            ticket.setLatitude(json.getDouble("latitude"));
+            ticket.setLongitude(json.getDouble("longitude"));
+            ticket.setAccuracy(json.getDouble("accuracy"));
+            ticket.setCheckpoint(Checkpoint.parseJSON(json.getJSONObject("checkpoint")));
+
+            return ticket;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static List<Ticket> parseJSONArray(JSONArray array){
+        List<Ticket> tickets = new ArrayList<Ticket>();
+
+        try {
+            for (int i = 0; i < array.length(); i++) {
+                JSONObject item = array.getJSONObject(i);
+                Ticket ticket = Ticket.parseJSON(item);
+                if (ticket != null) tickets.add(ticket);
+            }
+        } catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return tickets;
+    }
+
+    public static JSONArray toJSONArray(List<Ticket> tickets) {
+        JSONArray array = new JSONArray();
+
+        for(Ticket city : tickets) {
+            JSONObject item = city.toJSON();
+            if(item != null) array.put(item);
+        }
+
+        return array;
+    }
 
 }

@@ -80,4 +80,19 @@ public class CheckpointService {
 
     }
 
+    public static Checkpoint JSONtoCheckpoint(String JSONstring){
+
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            TypeReference<HashMap<String, Object>> typeRef = new TypeReference<HashMap<String, Object>>() {};
+            Map<String, Object> resultMap = mapper.readValue(JSONstring, typeRef);
+            Checkpoint checkpoint = new Checkpoint(((Integer) resultMap.get("id")).longValue(), (String) resultMap.get("nome"), (String) resultMap.get("in_out"), ((Boolean) resultMap.get("attivo")).booleanValue(), (String) resultMap.get("tipo"), ((Integer) resultMap.get("childsize")).longValue(), (String) resultMap.get("location"));
+
+            return checkpoint;
+        } catch(IOException e){
+            e.printStackTrace();
+        }
+        return null;
+    }
+
 }

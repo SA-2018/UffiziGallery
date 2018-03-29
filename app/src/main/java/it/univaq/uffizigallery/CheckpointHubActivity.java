@@ -26,6 +26,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(view.getContext(), CameraTestActivity.class);
+                intent.putExtra("checkpoint", getIntent().getStringExtra("checkpoint"));
                 view.getContext().startActivity(intent);
             }
         });
