@@ -26,11 +26,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
     private Button button1;
     private Button button2;
     private TextView textview1, textview2, textview3, textview4, textview5, textview6, textview7, textview8;
-    private final Intent intent;
-
-    public CheckpointHubActivity(){
-        this.intent = new Intent(getApplicationContext(), CameraTestActivity.class);
-    }
+    private Intent intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +44,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
         textview7 = findViewById(R.id.textview7);
         textview8 = findViewById(R.id.textview8);
 
-
+        intent = new Intent(getApplicationContext(), CameraTestActivity.class);
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -91,6 +87,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
         LocationListener listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
+                button1.setEnabled(true);
                 intent.putExtra("latitude", location.getLatitude());
                 intent.putExtra("longitude", location.getLongitude());
                 intent.putExtra("accuracy", location.getAccuracy());
@@ -118,7 +115,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
 
             LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
             if(manager != null)
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, listener);
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
 
         } catch(SecurityException e){
             e.printStackTrace();
