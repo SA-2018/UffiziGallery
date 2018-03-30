@@ -10,6 +10,7 @@ import android.content.pm.PackageManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
@@ -31,6 +32,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
     private RecyclerView recyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
     private ProgressDialog progress;
+
+    /**
+     * Permissions
+     */
+    private static final int PERMISSION_MULTIPLE_REQUEST = 1;
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -88,25 +94,42 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
 
         // TODO : add location permission
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
+        if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
                 ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) +
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) +
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
+                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE)) != PackageManager.PERMISSION_GRANTED) {
 
                 ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION,Manifest.permission.READ_PHONE_STATE},
-                        PackageManager.PERMISSION_GRANTED);
+                        new String[]{Manifest.permission.CAMERA, Manifest.permission.INTERNET, Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.READ_PHONE_STATE},
+                        PERMISSION_MULTIPLE_REQUEST);
         }
 
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
-                ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) +
-                ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) +
-                ContextCompat.checkSelfPermission(this, Manifest.permission.READ_PHONE_STATE) != PackageManager.PERMISSION_GRANTED) {
-            this.finish();
-            System.exit(1);
-        }
     }
 
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+
+        switch (requestCode){
+            case PERMISSION_MULTIPLE_REQUEST:
+                if(grantResults.length > 0){
+                    boolean camera = grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    boolean internet = grantResults[1] == PackageManager.PERMISSION_GRANTED;
+                    boolean gps = grantResults[2] == PackageManager.PERMISSION_GRANTED;
+                    boolean phone_state = grantResults[3] == PackageManager.PERMISSION_GRANTED;
+
+                    if(camera && internet && gps && phone_state){
+
+                    } else {
+                        this.finish();
+                        System.exit(1);
+                    }
+
+                }
+                break;
+        }
+
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+    }
 
     @Override
     protected void onResume() {

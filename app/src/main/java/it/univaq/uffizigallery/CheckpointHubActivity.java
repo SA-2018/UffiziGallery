@@ -92,7 +92,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
                 intent.putExtra("longitude", location.getLongitude());
                 intent.putExtra("accuracy", location.getAccuracy());
 
-                Toast.makeText(getApplicationContext(), "GPS location retrieved" , Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "GPS location retrieved ", Toast.LENGTH_SHORT).show();
 
             }
             @Override
@@ -115,7 +115,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
 
             LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
             if(manager != null)
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 0, listener);
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, listener);
 
         } catch(SecurityException e){
             e.printStackTrace();
