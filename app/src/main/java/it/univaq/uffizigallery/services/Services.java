@@ -125,7 +125,16 @@ public class Services extends IntentService {
             data.put("longitude", intent.getStringExtra("longitude"));
             data.put("accuracy", intent.getStringExtra("accuracy"));
 
-        }catch(SecurityException|NullPointerException e){
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final StringWriter stringWriter = new StringWriter();
+            objectMapper.writeValue((Writer) stringWriter, (Object) data);
+
+            String JSONString = stringWriter.toString();
+            ServerAPI toServer = new ServerAPI();
+            //manca comunicazione con ServerAPI
+
+
+        }catch(SecurityException|NullPointerException|IOException e){
             e.printStackTrace();
         }
 

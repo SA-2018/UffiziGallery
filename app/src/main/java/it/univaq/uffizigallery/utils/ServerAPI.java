@@ -64,7 +64,7 @@ public class ServerAPI {
         final String dev_name = obj.getString("device_name");
         final String dev_imei = obj.getString("device_imei");
         final String time = obj.getString("time");
-        String type = obj.getString("type");
+        String type = obj.getString("tipo");
         final int id_checkpoint = obj.getInt("id_checkpoint");
         double latitude, longitude, accuracy;
         final Checkpoint checkpoint = this.checkpointservice.find((long) id_checkpoint);
