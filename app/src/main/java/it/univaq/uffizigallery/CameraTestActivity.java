@@ -146,6 +146,10 @@ public class CameraTestActivity extends AppCompatActivity
                     intent.setAction(Services.ACTION_READ_BARCODE_COMPLETED);
                     intent.putExtra("barcode", sym.getData());
                     intent.putExtra("checkpoint", getIntent().getStringExtra("checkpoint"));
+                    intent.putExtra("latitude", getIntent().getStringExtra("latitude"));
+                    intent.putExtra("longitude", getIntent().getStringExtra("longitude"));
+                    intent.putExtra("accuracy", getIntent().getStringExtra("accuracy"));
+
                     startService(intent);
 
                     Toast.makeText(getApplicationContext(), "Sending barcode..." , Toast.LENGTH_SHORT).show();
