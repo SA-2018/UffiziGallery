@@ -9,6 +9,7 @@ import android.widget.Toast;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -94,6 +95,7 @@ public class Services extends IntentService {
 
         String barcode_data = intent.getStringExtra("barcode");
         Checkpoint checkpoint = CheckpointService.JSONtoCheckpoint(intent.getStringExtra("checkpoint"));
+
 
 
 
