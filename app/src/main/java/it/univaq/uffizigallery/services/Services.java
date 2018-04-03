@@ -26,11 +26,13 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 import it.univaq.uffizigallery.MainActivity;
 import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.model.Ticket;
+import it.univaq.uffizigallery.utils.ConnectionToServer;
 import it.univaq.uffizigallery.utils.ServerAPI;
 
 /**
@@ -41,6 +43,7 @@ public class Services extends IntentService {
 
     public static final String ACTION_DOWNLOAD =  "action_download";
     public static final String ACTION_READ_BARCODE_COMPLETED = "action_read_barcode_completed";
+    public static final String ACTION_UPLOAD =  "action_upload";
 
     private static final String NAME = Services.class.getSimpleName();
 
@@ -60,6 +63,10 @@ public class Services extends IntentService {
 
                 case ACTION_READ_BARCODE_COMPLETED:
                     read_barcode_completed(intent);
+                    break;
+
+                case ACTION_UPLOAD:
+                    upload();
                     break;
             }
         }
@@ -130,13 +137,31 @@ public class Services extends IntentService {
             objectMapper.writeValue((Writer) stringWriter, (Object) data);
 
             String JSONString = stringWriter.toString();
-            ServerAPI toServer = new ServerAPI();
-            //manca comunicazione con ServerAPI
+            ServerAPI toServer = new ServerAPI(checkpoint);
+            //da testare
+            toServer.ticketAdd(JSONString);
 
 
-        }catch(SecurityException|NullPointerException|IOException e){
+        }catch(SecurityException|NullPointerException|IOException|JSONException e){
             e.printStackTrace();
         }
+
+    }
+
+    private void upload(){
+        Intent intent = new Intent(MainActivity.ACTION_UPLOAD_COMPLETED);
+
+        ConnectionToServer toServer = new ConnectionToServer();
+        toServer.execute(getApplicationContext());
+
+        try {
+            //toServer.get();
+            System.out.println(toServer.get());
+        }catch(InterruptedException|ExecutionException e){
+            //
+        }
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 
     }
 

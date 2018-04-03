@@ -4,6 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -11,7 +12,7 @@ import java.util.List;
  * Created by Riccardo on 21/03/2018.
  */
 
-public class Ticket {
+public class Ticket implements Serializable {
 
     private int id;
 
@@ -179,7 +180,7 @@ public class Ticket {
             json.put("latitude", this.latitude);
             json.put("longitude", this.longitude);
             json.put("accuracy", this.accuracy);
-            json.put("checkpoint", this.checkpoint);
+            json.put("checkpoint", this.checkpoint.toJSON().toString());
             return json;
         } catch (JSONException e) {
             e.printStackTrace();

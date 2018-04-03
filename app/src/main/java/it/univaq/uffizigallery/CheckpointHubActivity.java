@@ -14,8 +14,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import it.univaq.uffizigallery.model.Checkpoint;
+import it.univaq.uffizigallery.model.Ticket;
 import it.univaq.uffizigallery.services.CheckpointService;
 import it.univaq.uffizigallery.services.LocationService;
+import it.univaq.uffizigallery.utils.ConnectionFromServer;
+import it.univaq.uffizigallery.utils.ConnectionToServer;
 
 /**
  * Created by Riccardo on 26/03/2018.
@@ -87,7 +90,10 @@ public class CheckpointHubActivity extends AppCompatActivity {
         LocationListener listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                button1.setEnabled(true);
+                //button1.setEnabled(true);
+
+                textview8.setText(new Double(location.getLatitude()).toString());
+
                 intent.putExtra("latitude", location.getLatitude());
                 intent.putExtra("longitude", location.getLongitude());
                 intent.putExtra("accuracy", location.getAccuracy());
@@ -98,24 +104,36 @@ public class CheckpointHubActivity extends AppCompatActivity {
             @Override
             public void onStatusChanged(String provider, int status, Bundle extras) {}
             @Override
-            public void onProviderEnabled(String provider) {}
+            public void onProviderEnabled(String provider) {
+                button1.setEnabled(true);
+            }
             @Override
-            public void onProviderDisabled(String provider) {}
+            public void onProviderDisabled(String provider) {
+                button1.setEnabled(false);
+            }
         };
+
+
+
+        ConnectionToServer toServer = new ConnectionToServer();
+        toServer.execute(new Ticket("in_out", "aa",0,0, "aa", "aa", "aa", "aa", 1, 1, 1, checkpoint), getApplicationContext());
+
 
         /* GPS */
         try {
 
+            LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
+            if(manager != null)
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, listener);
+
             LocationService ls = new LocationService(getApplicationContext());
             if(!ls.isGPSEnabled()){
+                textview8.setText("yolo");
+
                 Toast.makeText(getApplicationContext(), "Enable your GPS location to continue" , Toast.LENGTH_LONG).show();
                 button1.setEnabled(false);
                 return;
             }
-
-            LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
-            if(manager != null)
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, listener);
 
         } catch(SecurityException e){
             e.printStackTrace();

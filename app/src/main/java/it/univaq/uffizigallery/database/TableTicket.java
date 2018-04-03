@@ -4,6 +4,9 @@ import android.content.ContentValues;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import it.univaq.uffizigallery.model.Ticket;
 
 
@@ -113,4 +116,39 @@ public class TableTicket {
         }
         return i;
     }
+
+    public static List<Ticket> getAll(SQLiteDatabase db){
+
+        List<Ticket> tickets = new ArrayList<>();
+
+        String sql = "SELECT * FROM " + TABLE_NAME;
+        Cursor cursor = null;
+        try{
+            cursor = db.rawQuery(sql, null);
+            while(cursor.moveToNext()) {
+                Ticket ticket = new Ticket();
+                ticket.setId(cursor.getInt(cursor.getColumnIndex(ID)));
+                ticket.setIn_out(cursor.getString(cursor.getColumnIndex(IN_OUT)));
+                ticket.setTipo(cursor.getString(cursor.getColumnIndex(TIPO)));
+                ticket.setId_checkpoint(cursor.getInt(cursor.getColumnIndex(ID_CHECKPOINT)));
+                ticket.setChildsize(cursor.getLong(cursor.getColumnIndex(CHILDSIZE)));
+                ticket.setBarcode(cursor.getString(cursor.getColumnIndex(BARCODE)));
+                ticket.setDev_imei(cursor.getString(cursor.getColumnIndex(DEV_IMEI)));
+                ticket.setDev_name(cursor.getString(cursor.getColumnIndex(DEV_NAME)));
+                ticket.setTime(cursor.getString(cursor.getColumnIndex(TIME)));
+                ticket.setLatitude(cursor.getDouble(cursor.getColumnIndex(LATITUDE)));
+                ticket.setLongitude(cursor.getDouble(cursor.getColumnIndex(LONGITUDE)));
+                ticket.setAccuracy(cursor.getDouble(cursor.getColumnIndex(ACCURACY)));
+
+                tickets.add(ticket);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            if(cursor != null) cursor.close();
+        }
+
+        return tickets;
+    }
+
 }

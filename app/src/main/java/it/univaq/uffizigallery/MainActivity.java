@@ -28,6 +28,7 @@ import it.univaq.uffizigallery.services.Services;
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ACTION_SERVICE_COMPLETED = "action_service_completed";
+    public static final String ACTION_UPLOAD_COMPLETED =  "action_upload_completed";
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -70,6 +71,12 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                         }
 
                     }
+                    break;
+
+                case ACTION_UPLOAD_COMPLETED:
+                    Intent upload_intent = new Intent(getApplicationContext(), Services.class);
+                    intent.setAction(Services.ACTION_UPLOAD);
+                    startService(upload_intent);
                     break;
             }
         }
@@ -171,6 +178,7 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
 
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SERVICE_COMPLETED);
+        filter.addAction(ACTION_UPLOAD_COMPLETED);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
 
         // download action

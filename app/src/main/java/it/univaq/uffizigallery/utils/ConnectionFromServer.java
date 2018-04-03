@@ -22,7 +22,7 @@ public class ConnectionFromServer extends AsyncTask<String, Integer, String> {
     }
 
 
-    public Object connectionFromServer(){
+    private Object connectionFromServer(){
         String address = "http://uffizi.easyline.univaq.it/UFFIZI/api/checkpoint/get";
         InputStream in = null;
         StringBuilder stringBuilder = null;

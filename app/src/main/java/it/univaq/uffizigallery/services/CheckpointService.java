@@ -20,6 +20,16 @@ import it.univaq.uffizigallery.utils.ConnectionFromServer;
 
 public class CheckpointService {
 
+    private Checkpoint checkpoint;
+
+    public CheckpointService(Checkpoint checkpoint){
+        this.checkpoint = checkpoint;
+    }
+
+    public CheckpointService(){
+        this.checkpoint = null;
+    }
+
     public Object findActive(){
 
         ConnectionFromServer fromServer = new ConnectionFromServer();
@@ -40,9 +50,12 @@ public class CheckpointService {
 
     }
 
-    public Checkpoint find(long id_checkpoint){
-        //manca implementazione
-        return null;
+    public Checkpoint find(long id_checkpoint) {
+        if(this.checkpoint.getId() == id_checkpoint){
+            return this.checkpoint;
+        } else {
+            throw new RuntimeException();
+        }
     }
 
     public static List<Checkpoint> JSONtoCheckpointList(String JSONstring){

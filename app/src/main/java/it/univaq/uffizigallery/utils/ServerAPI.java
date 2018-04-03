@@ -42,6 +42,11 @@ public class ServerAPI {
         this.ticketservice = new TicketService();
     }
 
+    public ServerAPI(Checkpoint checkpoint){
+        this.checkpointservice = new CheckpointService(checkpoint);
+        this.ticketservice = new TicketService();
+    }
+
     @RequestMapping(value = { "/checkpoint/get" }, method = { RequestMethod.GET, RequestMethod.POST }, produces = {"application/json" })
     @ResponseBody
     public String getCheckpointActive() throws IOException, JSONException {
