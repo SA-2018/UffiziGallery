@@ -3,36 +3,26 @@ package it.univaq.uffizigallery.services;
 import android.app.IntentService;
 import android.content.Context;
 import android.content.Intent;
-import android.location.LocationManager;
 import android.os.Build;
 import android.support.annotation.Nullable;
 import android.support.v4.content.LocalBroadcastManager;
 import android.telephony.TelephonyManager;
-import android.widget.Toast;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
 import java.io.Writer;
-import java.sql.Time;
-import java.sql.Timestamp;
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
 
 import it.univaq.uffizigallery.MainActivity;
-import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Checkpoint;
-import it.univaq.uffizigallery.model.Ticket;
-import it.univaq.uffizigallery.utils.ConnectionToServer;
 import it.univaq.uffizigallery.utils.ServerAPI;
 
 /**
@@ -43,7 +33,6 @@ public class Services extends IntentService {
 
     public static final String ACTION_DOWNLOAD =  "action_download";
     public static final String ACTION_READ_BARCODE_COMPLETED = "action_read_barcode_completed";
-    public static final String ACTION_UPLOAD =  "action_upload";
 
     private static final String NAME = Services.class.getSimpleName();
 
@@ -63,10 +52,6 @@ public class Services extends IntentService {
 
                 case ACTION_READ_BARCODE_COMPLETED:
                     read_barcode_completed(intent);
-                    break;
-
-                case ACTION_UPLOAD:
-                    upload();
                     break;
             }
         }
@@ -138,7 +123,7 @@ public class Services extends IntentService {
 
             String JSONString = stringWriter.toString();
             ServerAPI toServer = new ServerAPI(checkpoint);
-            //da testare
+
             toServer.ticketAdd(JSONString);
 
 
@@ -147,24 +132,6 @@ public class Services extends IntentService {
         }
 
     }
-
-    private void upload(){
-        Intent intent = new Intent(MainActivity.ACTION_UPLOAD_COMPLETED);
-
-        ConnectionToServer toServer = new ConnectionToServer();
-        toServer.execute(getApplicationContext());
-
-        try {
-            //toServer.get();
-            System.out.println(toServer.get());
-        }catch(InterruptedException|ExecutionException e){
-            //
-        }
-
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
-
-    }
-
 
     /**
      * FUNZIONI DI APPOGGIO ALLA CLASSE SERVICES

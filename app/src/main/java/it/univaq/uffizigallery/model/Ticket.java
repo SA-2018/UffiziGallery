@@ -180,7 +180,7 @@ public class Ticket implements Serializable {
             json.put("latitude", this.latitude);
             json.put("longitude", this.longitude);
             json.put("accuracy", this.accuracy);
-            json.put("checkpoint", this.checkpoint.toJSON().toString());
+            json.put("checkpoint", this.checkpoint.toJSON());
             return json;
         } catch (JSONException e) {
             e.printStackTrace();

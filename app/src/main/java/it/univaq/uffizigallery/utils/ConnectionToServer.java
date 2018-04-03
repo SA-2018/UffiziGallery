@@ -3,29 +3,20 @@ package it.univaq.uffizigallery.utils;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-import com.android.volley.toolbox.Volley;
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.util.EntityUtils;
+import org.json.JSONObject;
 
-import org.apache.commons.lang3.SerializationUtils;
-
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.io.Serializable;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
-import it.univaq.uffizigallery.database.DBHelper;
+import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.model.Ticket;
 
 /**
@@ -37,9 +28,17 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
     @Override
     protected Integer doInBackground(Object objects[]) {
        // String result = (String)connectionFromServer();
+
+        Ticket ticket = new Ticket("aa", "aa", 0, 0, "aa", "aa", "aa", "aa", 0, 0, 0, new Checkpoint());
+        connectionToServer(ticket, (Context) objects[0]);
+
+/*
         Context context = (Context) objects[0];
+
         if(DBHelper.get(context).ticketCounter() == 0){
+
             return 0;
+
         } else {
 
             List<Ticket> todolist = DBHelper.get(context).getAll();
@@ -62,7 +61,9 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
 
             return 0;
 
-        }
+        }*/
+
+    return 0;
 
     }
 
@@ -70,39 +71,56 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
     private boolean connectionToServer(final Ticket ticket, Context context) {
 
         String address = "http://uffizi.easyline.univaq.it/UFFIZI/api/ticket/add";
+        String response = null;
 
-        RequestQueue queue = Volley.newRequestQueue(context);
-        StringRequest stringRequest = new StringRequest(
-                StringRequest.Method.POST,
-                address,
+        try {
+            URL url = new URL(address);
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        System.out.println("Response: " + response);
+            try{
+
+                connection.setRequestMethod("POST");
+                connection.setConnectTimeout(30);
+                connection.setReadTimeout(30);
+                connection.setDoOutput(true);
+                connection.setDoInput(true);
+                connection.setChunkedStreamingMode(0);
+
+                //TODO : aggiustare
+                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
+
+                try {
+                    HttpPost request = new HttpPost(address);
+                    StringEntity params = new StringEntity(ticket.toJSON().toString());
+                    request.addHeader("content-type", "application/json");
+                    request.setEntity(params);
+
+                    //httpClient.execute(request);
+
+                    HttpResponse httpResponse = httpClient.execute(request);
+
+                    HttpEntity responseEntity = httpResponse.getEntity();
+                    if(responseEntity!=null) {
+                        response = EntityUtils.toString(responseEntity);
                     }
-                }, new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-                System.out.println(error.toString());
 
+                } catch (Exception ex) {
+                    ex.printStackTrace();
+                } finally {
+                    httpClient.close();
+                }
+
+            } finally {
+                connection.disconnect();
             }
-        }){
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
 
-                Map<String, String> params = new HashMap<String, String>();
-                params.put("ticket", ticket.toJSON().toString());
+        }catch(IOException e){
+            e.printStackTrace();
+        }
 
-                return params;
-            }
-        };
-        queue.add(stringRequest);
-
-
+        System.out.println("Response: "  + response);
         return true;
 
-        //System.out.println(stringBuilder.toString()==null?"null":stringBuilder.toString());
 
     }
 

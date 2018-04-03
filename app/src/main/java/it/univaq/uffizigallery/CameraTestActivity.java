@@ -4,39 +4,36 @@ package it.univaq.uffizigallery;
  * Created by valen on 27/03/2018.
  */
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.content.pm.ActivityInfo;
+import android.hardware.Camera;
+import android.hardware.Camera.AutoFocusCallback;
+import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.content.LocalBroadcastManager;
+import android.support.v7.app.AppCompatActivity;
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.Toast;
+
+import net.sourceforge.zbar.Config;
+import net.sourceforge.zbar.Image;
+import net.sourceforge.zbar.ImageScanner;
+import net.sourceforge.zbar.Symbol;
+import net.sourceforge.zbar.SymbolSet;
+
+import it.univaq.uffizigallery.services.BackgroundUpload;
 import it.univaq.uffizigallery.services.Services;
 import it.univaq.uffizigallery.utils.ZBarAPI;
 
-import android.app.Activity;
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
-import android.os.Handler;
-import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
-
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.view.Window;
-import android.widget.FrameLayout;
-import android.widget.Button;
-
-import android.hardware.Camera;
-import android.hardware.Camera.PreviewCallback;
-import android.hardware.Camera.AutoFocusCallback;
-import android.hardware.Camera.Parameters;
-import android.hardware.Camera.Size;
-
-import android.widget.TextView;
-import android.graphics.ImageFormat;
-import android.widget.Toast;
-
 /* Import ZBar Class files */
-import net.sourceforge.zbar.ImageScanner;
-import net.sourceforge.zbar.Image;
-import net.sourceforge.zbar.Symbol;
-import net.sourceforge.zbar.SymbolSet;
-import net.sourceforge.zbar.Config;
 
 public class CameraTestActivity extends AppCompatActivity
 {
@@ -56,6 +53,25 @@ public class CameraTestActivity extends AppCompatActivity
         System.loadLibrary("iconv");
     }
 
+    public static final String ACTION_UPLOAD_COMPLETED = "action_upload_completed";
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent == null || intent.getAction() == null) return;
+
+            switch (intent.getAction()){
+                case ACTION_UPLOAD_COMPLETED:
+                    // upload action
+                    Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+                    intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+                    intent_upload.putExtra("source", "Camera");
+                    startService(intent_upload);
+                    break;
+            }
+        }
+    };
+
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -74,8 +90,6 @@ public class CameraTestActivity extends AppCompatActivity
         mPreview = new ZBarAPI(this, mCamera, previewCb, autoFocusCB);
         FrameLayout preview = (FrameLayout)findViewById(R.id.cameraPreview);
         preview.addView(mPreview);
-
-        //scanText = (TextView)findViewById(R.id.scanText);
 
         scanButton = (Button)findViewById(R.id.ScanButton);
 
@@ -152,9 +166,8 @@ public class CameraTestActivity extends AppCompatActivity
 
                     startService(intent);
 
-                    Toast.makeText(getApplicationContext(), "Sending barcode..." , Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(), "Sending data..." , Toast.LENGTH_SHORT).show();
 
-                    //scanText.setText("barcode result " + sym.getData());
                     barcodeScanned = true;
                 }
             }
@@ -167,4 +180,26 @@ public class CameraTestActivity extends AppCompatActivity
             autoFocusHandler.postDelayed(doAutoFocus, 1000);
         }
     };
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        //uploading
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPLOAD_COMPLETED);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
+
+        // upload action
+        Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+        intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+        intent_upload.putExtra("source", "Camera");
+        startService(intent_upload);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(receiver);
+    }
+
 }

@@ -1,11 +1,14 @@
 package it.univaq.uffizigallery;
 
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
+import android.support.v4.content.LocalBroadcastManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
 import android.view.View;
@@ -14,11 +17,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import it.univaq.uffizigallery.model.Checkpoint;
-import it.univaq.uffizigallery.model.Ticket;
+import it.univaq.uffizigallery.services.BackgroundUpload;
 import it.univaq.uffizigallery.services.CheckpointService;
 import it.univaq.uffizigallery.services.LocationService;
-import it.univaq.uffizigallery.utils.ConnectionFromServer;
-import it.univaq.uffizigallery.utils.ConnectionToServer;
 
 /**
  * Created by Riccardo on 26/03/2018.
@@ -30,6 +31,26 @@ public class CheckpointHubActivity extends AppCompatActivity {
     private Button button2;
     private TextView textview1, textview2, textview3, textview4, textview5, textview6, textview7, textview8;
     private Intent intent;
+
+    public static final String ACTION_UPLOAD_COMPLETED = "action_upload_completed";
+
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            if(intent == null || intent.getAction() == null) return;
+
+            switch (intent.getAction()){
+                case ACTION_UPLOAD_COMPLETED:
+                    // upload action
+                    Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+                    intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+                    intent_upload.putExtra("source", "CheckpointHubActivity");
+                    startService(intent_upload);
+                    break;
+            }
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -52,7 +73,7 @@ public class CheckpointHubActivity extends AppCompatActivity {
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                //Intent intent = new Intent(view.getContext(), CameraTestActivity.class);
+                Intent intent = new Intent(view.getContext(), CameraTestActivity.class);
                 intent.putExtra("checkpoint", getIntent().getStringExtra("checkpoint"));
                 view.getContext().startActivity(intent);
             }
@@ -64,6 +85,18 @@ public class CheckpointHubActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
 
+        //uploading
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(ACTION_UPLOAD_COMPLETED);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
+
+        // upload action
+        Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+        intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+        intent_upload.putExtra("source", "CheckpointHubActivity");
+        startService(intent_upload);
+
+        // textview e GPS creation
         Checkpoint checkpoint = CheckpointService.JSONtoCheckpoint(getIntent().getStringExtra("checkpoint"));
         textview1.setText("NOME");
         textview1.setGravity(Gravity.CENTER);
@@ -113,12 +146,6 @@ public class CheckpointHubActivity extends AppCompatActivity {
             }
         };
 
-
-
-        ConnectionToServer toServer = new ConnectionToServer();
-        toServer.execute(new Ticket("in_out", "aa",0,0, "aa", "aa", "aa", "aa", 1, 1, 1, checkpoint), getApplicationContext());
-
-
         /* GPS */
         try {
 
@@ -141,6 +168,12 @@ public class CheckpointHubActivity extends AppCompatActivity {
 
 
 
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(receiver);
     }
 
 }

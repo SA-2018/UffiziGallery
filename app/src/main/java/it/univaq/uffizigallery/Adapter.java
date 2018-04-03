@@ -65,6 +65,7 @@ public class Adapter extends RecyclerView.Adapter<Adapter.ViewHolder> {
             JSONObject checkpoint = data.optJSONObject(getAdapterPosition());
             Intent intent = new Intent(v.getContext(), CheckpointHubActivity.class);
             intent.putExtra("checkpoint", checkpoint.toString());
+            intent.putExtra("source", "adapter");
             v.getContext().startActivity(intent);
         }
     }

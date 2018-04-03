@@ -23,12 +23,13 @@ import android.support.v7.widget.RecyclerView;
 import org.json.JSONArray;
 import org.json.JSONException;
 
+import it.univaq.uffizigallery.services.BackgroundUpload;
 import it.univaq.uffizigallery.services.Services;
 
 public class MainActivity extends AppCompatActivity implements SwipeRefreshLayout.OnRefreshListener {
 
     public static final String ACTION_SERVICE_COMPLETED = "action_service_completed";
-    public static final String ACTION_UPLOAD_COMPLETED =  "action_upload_completed";
+    public static final String ACTION_UPLOAD_COMPLETED = "action_upload_completed";
 
     private RecyclerView recyclerView;
     private SwipeRefreshLayout mSwipeRefreshLayout;
@@ -74,9 +75,11 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                     break;
 
                 case ACTION_UPLOAD_COMPLETED:
-                    Intent upload_intent = new Intent(getApplicationContext(), Services.class);
-                    intent.setAction(Services.ACTION_UPLOAD);
-                    startService(upload_intent);
+                    // upload action
+                    Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+                    intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+                    intent_upload.putExtra("source", "MainActivity");
+                    startService(intent_upload);
                     break;
             }
         }
@@ -167,7 +170,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         }
 
         //progress setting
-        //progress.setTitle("yolo");
         progress.setMessage("Download checkpoint...");
         progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
         progress.setCancelable(false);
@@ -175,7 +177,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         progress.show();
 
         //preparing to download
-
         IntentFilter filter = new IntentFilter();
         filter.addAction(ACTION_SERVICE_COMPLETED);
         filter.addAction(ACTION_UPLOAD_COMPLETED);
@@ -186,6 +187,13 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
         final Intent intent = new Intent(getApplicationContext(), Services.class);
         intent.setAction(Services.ACTION_DOWNLOAD);
         startService(intent);
+
+        // upload action
+        Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+        intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+        intent_upload.putExtra("source", "MainActivity");
+        startService(intent_upload);
+
     }
 
     @Override

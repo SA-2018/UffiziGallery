@@ -30,6 +30,8 @@
         </activity>
 
         <service android:name=".services.Services" android:exported="false" />
+        <service android:name=".services.BackgroundUpload" android:exported="false" />
+
         <activity
             android:name=".CheckpointHubActivity"
             android:label="@string/pre_scan"></activity>
