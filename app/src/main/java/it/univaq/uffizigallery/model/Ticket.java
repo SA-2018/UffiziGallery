@@ -4,7 +4,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,7 +11,7 @@ import java.util.List;
  * Created by Riccardo on 21/03/2018.
  */
 
-public class Ticket implements Serializable {
+public class Ticket {
 
     private int id;
 
@@ -47,10 +46,10 @@ public class Ticket implements Serializable {
         this.checkpoint = null;
     }
 
-    public Ticket(String in_out, String tipo, long id_checkpoint, long childsize, String barcode, String dev_imei, String dev_name, String time, double latitude, double longitude, double accuracy, Checkpoint checkpoint){
+    public Ticket(String in_out, String tipo, long childsize, String barcode, String dev_imei, String dev_name, String time, double latitude, double longitude, double accuracy, Checkpoint checkpoint){
         this.in_out = in_out;
         this.tipo = tipo;
-        this.id_checkpoint = id_checkpoint;
+        this.id_checkpoint = checkpoint.getId();
         this.childsize = childsize;
         this.barcode = barcode;
         this.dev_imei = dev_imei;
@@ -163,7 +162,10 @@ public class Ticket implements Serializable {
         this.accuracy = accuracy;
     }
 
-    public void setCheckpoint(Checkpoint checkpoint){ this.checkpoint = checkpoint; }
+    public void setCheckpoint(Checkpoint checkpoint){
+        this.checkpoint = checkpoint;
+        this.id_checkpoint = this.checkpoint.getId();
+    }
 
     public JSONObject toJSON(){
 
@@ -180,7 +182,7 @@ public class Ticket implements Serializable {
             json.put("latitude", this.latitude);
             json.put("longitude", this.longitude);
             json.put("accuracy", this.accuracy);
-            json.put("checkpoint", this.checkpoint.toJSON());
+            json.put("checkpoint", this.checkpoint);
             return json;
         } catch (JSONException e) {
             e.printStackTrace();

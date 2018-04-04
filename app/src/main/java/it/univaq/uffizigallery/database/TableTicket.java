@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import it.univaq.uffizigallery.model.Ticket;
+import it.univaq.uffizigallery.services.CheckpointService;
 
 
 public class TableTicket {
@@ -61,6 +62,7 @@ public class TableTicket {
 
         ContentValues values = new ContentValues();
         values.put(IN_OUT, ticket.getIn_out());
+        values.put(TIPO, ticket.getTipo());
         values.put(ID_CHECKPOINT, ticket.getId_checkpoint());
         values.put(CHILDSIZE, ticket.getChildsize());
         values.put(BARCODE, ticket.getBarcode());
@@ -139,6 +141,7 @@ public class TableTicket {
                 ticket.setLatitude(cursor.getDouble(cursor.getColumnIndex(LATITUDE)));
                 ticket.setLongitude(cursor.getDouble(cursor.getColumnIndex(LONGITUDE)));
                 ticket.setAccuracy(cursor.getDouble(cursor.getColumnIndex(ACCURACY)));
+                ticket.setCheckpoint(CheckpointService.JSONtoCheckpoint(cursor.getString(cursor.getColumnIndex(CHECKPOINT))));
 
                 tickets.add(ticket);
             }

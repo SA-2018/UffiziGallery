@@ -3,20 +3,12 @@ package it.univaq.uffizigallery.utils;
 import android.content.Context;
 import android.os.AsyncTask;
 
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
-import org.apache.http.util.EntityUtils;
-import org.json.JSONObject;
-
-import java.io.IOException;
+import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.List;
 
-import it.univaq.uffizigallery.model.Checkpoint;
+import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Ticket;
 
 /**
@@ -27,12 +19,7 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
 
     @Override
     protected Integer doInBackground(Object objects[]) {
-       // String result = (String)connectionFromServer();
 
-        Ticket ticket = new Ticket("aa", "aa", 0, 0, "aa", "aa", "aa", "aa", 0, 0, 0, new Checkpoint());
-        connectionToServer(ticket, (Context) objects[0]);
-
-/*
         Context context = (Context) objects[0];
 
         if(DBHelper.get(context).ticketCounter() == 0){
@@ -47,7 +34,7 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
             while(!todolist.isEmpty()){
                 Ticket ticket = todolist.get(count);
 
-                boolean success = connectionToServer(ticket, context);
+                boolean success = connectionToServer(ticket);
 
                 if(success){
                     todolist.remove(count);
@@ -61,68 +48,111 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
 
             return 0;
 
-        }*/
-
-    return 0;
+        }
 
     }
 
     //Todo : riaggiustare funzione connectionToServer()
-    private boolean connectionToServer(final Ticket ticket, Context context) {
+    private boolean connectionToServer(final Ticket ticket) {
 
         String address = "http://uffizi.easyline.univaq.it/UFFIZI/api/ticket/add";
-        String response = null;
+        boolean success = false;
 
+        String json_string = "{\"in_out\":\"" + ticket.getIn_out() +
+                "\",\"barcode\":\"" + ticket.getBarcode() +
+                "\",\"device_imei\":\"" + ticket.getDev_imei() +
+                "\",\"device_name\":\"" + ticket.getDev_name() +
+                "\",\"id_checkpoint\":\"" + ticket.getId_checkpoint() +
+                "\",\"time\":\"" + ticket.getTime() +
+                "\",\"type\":\"" + ticket.getTipo() +
+                "\",\"lat\":\"" + ticket.getLatitude() +
+                "\",\"lng\":\"" +  ticket.getLongitude() +
+                "\",\"accuracy\":\"" + ticket.getAccuracy() +
+                "\"}";
+
+        //Map<String, Object> obj = new HashMap<String, Object>();
+
+        //creazione jsonstring
+        /*
         try {
-            URL url = new URL(address);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 
-            try{
+            obj.put("in_out", ticket.getIn_out());
+            obj.put("barcode", ticket.getBarcode());
+            obj.put("device_imei", ticket.getDev_imei());
+            obj.put("device_name", ticket.getDev_name());
+            obj.put("id_checkpoint", new Long(ticket.getId_checkpoint()).toString() );
+            //obj.put("checkpoint", ticket.getCheckpoint().toMap());
+            obj.put("time", ticket.getTime());
+            obj.put("type", ticket.getTipo());
+            obj.put("lat", new Double(ticket.getLatitude()).toString());
+            obj.put("lng", new Double(ticket.getLongitude()).toString());
+            obj.put("accuracy", new Double(ticket.getAccuracy()).toString());
 
-                connection.setRequestMethod("POST");
-                connection.setConnectTimeout(30);
-                connection.setReadTimeout(30);
-                connection.setDoOutput(true);
-                connection.setDoInput(true);
-                connection.setChunkedStreamingMode(0);
+            final ObjectMapper objectMapper = new ObjectMapper();
+            final StringWriter stringWriter = new StringWriter();
+            objectMapper.writeValue((Writer) stringWriter, (Object) obj);
 
-                //TODO : aggiustare
-                CloseableHttpClient httpClient = HttpClientBuilder.create().build();
-
-                try {
-                    HttpPost request = new HttpPost(address);
-                    StringEntity params = new StringEntity(ticket.toJSON().toString());
-                    request.addHeader("content-type", "application/json");
-                    request.setEntity(params);
-
-                    //httpClient.execute(request);
-
-                    HttpResponse httpResponse = httpClient.execute(request);
-
-                    HttpEntity responseEntity = httpResponse.getEntity();
-                    if(responseEntity!=null) {
-                        response = EntityUtils.toString(responseEntity);
-                    }
-
-                } catch (Exception ex) {
-                    ex.printStackTrace();
-                } finally {
-                    httpClient.close();
-                }
-
-            } finally {
-                connection.disconnect();
-            }
+            json_string = stringWriter.toString();
 
         }catch(IOException e){
             e.printStackTrace();
+        }*/
+
+
+        //send to server
+        HttpURLConnection con = null;
+
+        try {
+
+            URL url = new URL(address);
+            con = (HttpURLConnection) url.openConnection();
+            con.setRequestMethod("POST");
+
+            String urlParameters = "json=" + json_string;
+
+            // Send post request
+            con.setDoOutput(true);
+            DataOutputStream wr = new DataOutputStream(con.getOutputStream());
+            wr.writeBytes(urlParameters);
+            wr.flush();
+            wr.close();
+
+            int responseCode = con.getResponseCode();
+
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                success = true;
+            } else {
+                success = false;
+            }
+
+            /*
+            System.out.println("\nSending 'POST' request to URL : " + address);
+            System.out.println("Post parameters : " + urlParameters);
+            System.out.println("Response Code : " + responseCode);
+
+            BufferedReader in = new BufferedReader(
+                    new InputStreamReader(con.getInputStream()));
+            String inputLine;
+            StringBuffer response = new StringBuffer();
+
+            while ((inputLine = in.readLine()) != null) {
+                response.append(inputLine);
+            }
+            in.close();
+
+
+            System.out.println(response.toString());
+            */
+
+
+        }catch(Exception e){
+            e.printStackTrace();
+        } finally {
+            con.disconnect();
         }
 
-        System.out.println("Response: "  + response);
-        return true;
-
+        return success;
 
     }
-
 
 }

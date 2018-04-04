@@ -11,6 +11,7 @@ import android.telephony.TelephonyManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -21,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import it.univaq.uffizigallery.CheckpointHubActivity;
 import it.univaq.uffizigallery.MainActivity;
 import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.utils.ServerAPI;
@@ -62,7 +64,7 @@ public class Services extends IntentService {
         Intent intent = new Intent(MainActivity.ACTION_SERVICE_COMPLETED);
 
             try {
-                ServerAPI fromServer = new ServerAPI();
+                ServerAPI fromServer = new ServerAPI(getApplicationContext());
                 List<Checkpoint> checkpoints = CheckpointService.JSONtoCheckpointList(fromServer.getCheckpointActive());
 
                 //from checkpoint list to JSON checkpoint list
@@ -96,6 +98,8 @@ public class Services extends IntentService {
     // Todo : callback function on read barcode completed
     private void read_barcode_completed(Intent intent){
 
+        Intent response = new Intent(CheckpointHubActivity.ACTION_SCAN_COMPLETED);
+
         String barcode_data = intent.getStringExtra("barcode");
         Checkpoint checkpoint = CheckpointService.JSONtoCheckpoint(intent.getStringExtra("checkpoint"));
         TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
@@ -107,10 +111,10 @@ public class Services extends IntentService {
             data.put("tipo", checkpoint.getTipo());
             data.put("id_checkpoint", checkpoint.getId());
             data.put("barcode", barcode_data);
-            data.put("dev_imei", telephonyManager.getDeviceId());
-            data.put("dev_name", getDeviceName());
+            data.put("device_imei", telephonyManager.getDeviceId());
+            data.put("device_name", getDeviceName());
 
-            String timeStamp = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss").format(new Date());
+            String timeStamp = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(new Date());
 
             data.put("time", timeStamp);
             data.put("latitude", intent.getStringExtra("latitude"));
@@ -122,14 +126,33 @@ public class Services extends IntentService {
             objectMapper.writeValue((Writer) stringWriter, (Object) data);
 
             String JSONString = stringWriter.toString();
-            ServerAPI toServer = new ServerAPI(checkpoint);
+            ServerAPI toServer = new ServerAPI(checkpoint, getApplicationContext());
 
-            toServer.ticketAdd(JSONString);
+            String result = toServer.ticketAdd(JSONString);
 
+            int error;
+
+            try {
+                JSONObject o = new JSONObject(result);
+                error = o.getInt("error");
+
+                if(error == 0){
+                    checkpoint.setChildsize(checkpoint.getChildsize() + 1);
+                    response.putExtra("checkpoint", checkpoint.toString());
+                } else {
+                    response.putExtra("checkpoint", checkpoint.toString());
+                }
+
+            } catch(JSONException e){
+                e.printStackTrace();
+            }
 
         }catch(SecurityException|NullPointerException|IOException|JSONException e){
             e.printStackTrace();
         }
+
+
+        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(response);
 
     }
 

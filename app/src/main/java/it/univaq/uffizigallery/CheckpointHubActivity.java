@@ -1,7 +1,9 @@
 package it.univaq.uffizigallery;
 
+import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.location.Location;
@@ -16,6 +18,7 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.services.BackgroundUpload;
 import it.univaq.uffizigallery.services.CheckpointService;
@@ -31,8 +34,9 @@ public class CheckpointHubActivity extends AppCompatActivity {
     private Button button2;
     private TextView textview1, textview2, textview3, textview4, textview5, textview6, textview7, textview8;
     private Intent intent;
+    private Checkpoint checkpoint;
 
-    public static final String ACTION_UPLOAD_COMPLETED = "action_upload_completed";
+    public static final String ACTION_SCAN_COMPLETED = "action_scan_completed";
 
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
@@ -41,12 +45,18 @@ public class CheckpointHubActivity extends AppCompatActivity {
             if(intent == null || intent.getAction() == null) return;
 
             switch (intent.getAction()){
-                case ACTION_UPLOAD_COMPLETED:
+                case Intent.ACTION_TIME_TICK:
                     // upload action
                     Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
                     intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
-                    intent_upload.putExtra("source", "CheckpointHubActivity");
                     startService(intent_upload);
+                    break;
+
+                case ACTION_SCAN_COMPLETED:
+                    // upload action
+                    Checkpoint res = CheckpointService.JSONtoCheckpoint(intent.getStringExtra("checkpoint"));
+                    checkpoint.setChildsize(res.getChildsize());
+                    textview8.setText( new Long(checkpoint.getChildsize()).toString());
                     break;
             }
         }
@@ -68,14 +78,33 @@ public class CheckpointHubActivity extends AppCompatActivity {
         textview7 = findViewById(R.id.textview7);
         textview8 = findViewById(R.id.textview8);
 
-        intent = new Intent(getApplicationContext(), CameraTestActivity.class);
+        intent = new Intent(getApplicationContext(), CameraActivity.class);
 
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(view.getContext(), CameraTestActivity.class);
+                Intent intent = new Intent(view.getContext(), CameraActivity.class);
                 intent.putExtra("checkpoint", getIntent().getStringExtra("checkpoint"));
                 view.getContext().startActivity(intent);
+            }
+        });
+
+        button2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                AlertDialog.Builder builder = new AlertDialog.Builder(view.getContext());
+                builder.setTitle("STATUS");
+                builder.setMessage("Number of pending tickets: " + DBHelper.get(view.getContext()).ticketCounter());
+                builder.setNegativeButton("OK", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        dialogInterface.dismiss();
+                    }
+                });
+                AlertDialog dialog = builder.create();
+                dialog.show();
+
             }
         });
 
@@ -87,17 +116,19 @@ public class CheckpointHubActivity extends AppCompatActivity {
 
         //uploading
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_UPLOAD_COMPLETED);
+        filter.addAction(ACTION_SCAN_COMPLETED);
+        filter.addAction(Intent.ACTION_TIME_TICK);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
 
         // upload action
         Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
         intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
-        intent_upload.putExtra("source", "CheckpointHubActivity");
         startService(intent_upload);
 
-        // textview e GPS creation
-        Checkpoint checkpoint = CheckpointService.JSONtoCheckpoint(getIntent().getStringExtra("checkpoint"));
+        // textview, GPS creation
+
+        this.checkpoint = CheckpointService.JSONtoCheckpoint(getIntent().getStringExtra("checkpoint"));
+
         textview1.setText("NOME");
         textview1.setGravity(Gravity.CENTER);
         textview2.setText( checkpoint.getNome()!=null?checkpoint.getNome():"no data" );
@@ -117,15 +148,12 @@ public class CheckpointHubActivity extends AppCompatActivity {
         textview7.setGravity(Gravity.CENTER);
         long childsize_value = checkpoint.getChildsize();
 
-        textview8.setText(new Integer((int)childsize_value).toString());
+        textview8.setText(new Long(childsize_value).toString());
         textview8.setGravity(Gravity.CENTER);
 
         LocationListener listener = new LocationListener() {
             @Override
             public void onLocationChanged(Location location) {
-                //button1.setEnabled(true);
-
-                textview8.setText(new Double(location.getLatitude()).toString());
 
                 intent.putExtra("latitude", location.getLatitude());
                 intent.putExtra("longitude", location.getLongitude());
@@ -147,15 +175,15 @@ public class CheckpointHubActivity extends AppCompatActivity {
         };
 
         /* GPS */
+
         try {
 
             LocationManager manager = (LocationManager) getApplicationContext().getSystemService(Context.LOCATION_SERVICE);
             if(manager != null)
-                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 10000, 5, listener);
+                manager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 30000, 5, listener);
 
             LocationService ls = new LocationService(getApplicationContext());
             if(!ls.isGPSEnabled()){
-                textview8.setText("yolo");
 
                 Toast.makeText(getApplicationContext(), "Enable your GPS location to continue" , Toast.LENGTH_LONG).show();
                 button1.setEnabled(false);

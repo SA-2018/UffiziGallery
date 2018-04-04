@@ -36,7 +36,7 @@
             android:name=".CheckpointHubActivity"
             android:label="@string/pre_scan"></activity>
 
-        <activity android:name=".CameraTestActivity"
+        <activity android:name=".CameraActivity"
             android:label="@string/zbar"></activity>
 
     </application>

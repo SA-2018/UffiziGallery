@@ -2,7 +2,7 @@
     <string name="app_name">UffiziGallery</string>
     <string name="button1">SCAN</string>
     <string name="button2">STATUS</string>
-    <string name="pre_scan">PRE SCAN</string>
-    <string name="zbar">ZBAR</string>
+    <string name="pre_scan">CHECKPOINT HUB</string>
+    <string name="zbar">BARCODE SCAN</string>
     <string name="newscanbutton">NEW SCAN</string>
 </resources>

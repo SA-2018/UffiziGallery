@@ -3,7 +3,6 @@ package it.univaq.uffizigallery.database;
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.widget.ListAdapter;
 
 import java.util.List;
 

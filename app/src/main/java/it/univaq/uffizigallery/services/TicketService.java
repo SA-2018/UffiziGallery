@@ -12,9 +12,7 @@ import it.univaq.uffizigallery.model.Ticket;
 public class TicketService {
 
     private Context context;
-    public TicketService(){
-        this.context = null;
-    }
+
     public TicketService(Context context){
     this.context = context;
     }

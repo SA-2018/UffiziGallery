@@ -37,14 +37,11 @@ public class ServerAPI {
         this.checkpointservice = new CheckpointService();
         this.ticketservice = new TicketService(this.context);
     }
-    public ServerAPI(){
-        this.checkpointservice = new CheckpointService();
-        this.ticketservice = new TicketService();
-    }
 
-    public ServerAPI(Checkpoint checkpoint){
+    public ServerAPI(Checkpoint checkpoint, Context context){
+        this.context = context;
         this.checkpointservice = new CheckpointService(checkpoint);
-        this.ticketservice = new TicketService();
+        this.ticketservice = new TicketService(this.context);
     }
 
     @RequestMapping(value = { "/checkpoint/get" }, method = { RequestMethod.GET, RequestMethod.POST }, produces = {"application/json" })

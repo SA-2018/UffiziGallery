@@ -35,7 +35,7 @@ import it.univaq.uffizigallery.utils.ZBarAPI;
 
 /* Import ZBar Class files */
 
-public class CameraTestActivity extends AppCompatActivity
+public class CameraActivity extends AppCompatActivity
 {
     private Camera mCamera;
     private ZBarAPI mPreview;
@@ -53,7 +53,6 @@ public class CameraTestActivity extends AppCompatActivity
         System.loadLibrary("iconv");
     }
 
-    public static final String ACTION_UPLOAD_COMPLETED = "action_upload_completed";
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -61,11 +60,10 @@ public class CameraTestActivity extends AppCompatActivity
             if(intent == null || intent.getAction() == null) return;
 
             switch (intent.getAction()){
-                case ACTION_UPLOAD_COMPLETED:
+                case Intent.ACTION_TIME_TICK:
                     // upload action
                     Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
                     intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
-                    intent_upload.putExtra("source", "Camera");
                     startService(intent_upload);
                     break;
             }
@@ -186,13 +184,12 @@ public class CameraTestActivity extends AppCompatActivity
         super.onResume();
         //uploading
         IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_UPLOAD_COMPLETED);
+        filter.addAction(Intent.ACTION_TIME_TICK);
         LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
 
         // upload action
         Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
         intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
-        intent_upload.putExtra("source", "Camera");
         startService(intent_upload);
     }
 

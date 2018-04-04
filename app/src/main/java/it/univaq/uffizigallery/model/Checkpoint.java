@@ -3,6 +3,9 @@ package it.univaq.uffizigallery.model;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+import java.util.Map;
+
 /**
  * Created by Riccardo on 21/03/2018.
  */
@@ -137,6 +140,20 @@ public class Checkpoint {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public Map<String, Object> toMap(){
+        Map<String, Object> res_map = new HashMap<String, Object>();
+
+        res_map.put("id", this.id);
+        res_map.put("nome", this.nome);
+        res_map.put("in_out", this.in_out);
+        res_map.put("attivo", this.attivo);
+        res_map.put("tipo", this.tipo);
+        res_map.put("childsize", this.childsize);
+        res_map.put("location", this.location);
+
+        return res_map;
     }
 
 }
