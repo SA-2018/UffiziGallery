@@ -36,8 +36,6 @@ public class CheckpointHubActivity extends AppCompatActivity {
     private Intent intent;
     private Checkpoint checkpoint;
 
-    public static final String ACTION_SCAN_COMPLETED = "action_scan_completed";
-
     private BroadcastReceiver receiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
@@ -50,13 +48,6 @@ public class CheckpointHubActivity extends AppCompatActivity {
                     Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
                     intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
                     startService(intent_upload);
-                    break;
-
-                case ACTION_SCAN_COMPLETED:
-                    // upload action
-                    Checkpoint res = CheckpointService.JSONtoCheckpoint(intent.getStringExtra("checkpoint"));
-                    checkpoint.setChildsize(res.getChildsize());
-                    textview8.setText( new Long(checkpoint.getChildsize()).toString());
                     break;
             }
         }
@@ -80,6 +71,8 @@ public class CheckpointHubActivity extends AppCompatActivity {
 
         intent = new Intent(getApplicationContext(), CameraActivity.class);
 
+        this.checkpoint = CheckpointService.JSONtoCheckpoint(getIntent().getStringExtra("checkpoint"));
+
         button1.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -88,6 +81,24 @@ public class CheckpointHubActivity extends AppCompatActivity {
                 view.getContext().startActivity(intent);
             }
         });
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        //uploading
+        IntentFilter filter = new IntentFilter();
+        filter.addAction(Intent.ACTION_TIME_TICK);
+        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
+
+        // upload action
+        Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
+        intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
+        startService(intent_upload);
+
+        // textview, GPS e button creation
 
         button2.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -107,27 +118,6 @@ public class CheckpointHubActivity extends AppCompatActivity {
 
             }
         });
-
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        //uploading
-        IntentFilter filter = new IntentFilter();
-        filter.addAction(ACTION_SCAN_COMPLETED);
-        filter.addAction(Intent.ACTION_TIME_TICK);
-        LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(receiver, filter);
-
-        // upload action
-        Intent intent_upload = new Intent(getApplicationContext(), BackgroundUpload.class);
-        intent_upload.setAction(BackgroundUpload.ACTION_UPLOAD);
-        startService(intent_upload);
-
-        // textview, GPS creation
-
-        this.checkpoint = CheckpointService.JSONtoCheckpoint(getIntent().getStringExtra("checkpoint"));
 
         textview1.setText("NOME");
         textview1.setGravity(Gravity.CENTER);
@@ -193,8 +183,6 @@ public class CheckpointHubActivity extends AppCompatActivity {
         } catch(SecurityException e){
             e.printStackTrace();
         }
-
-
 
     }
 

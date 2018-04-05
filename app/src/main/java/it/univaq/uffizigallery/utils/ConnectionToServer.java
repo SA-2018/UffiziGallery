@@ -7,6 +7,7 @@ import java.io.DataOutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
+import java.util.Stack;
 
 import it.univaq.uffizigallery.database.DBHelper;
 import it.univaq.uffizigallery.model.Ticket;
@@ -29,17 +30,17 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
         } else {
 
             List<Ticket> todolist = DBHelper.get(context).getAll();
-            int count = 0;
+            Stack<Ticket> stack = new Stack<Ticket>();
+            stack.addAll(todolist);
 
-            while(!todolist.isEmpty()){
-                Ticket ticket = todolist.get(count);
+            while(!stack.isEmpty()){
+                Ticket ticket = stack.peek();
 
                 boolean success = connectionToServer(ticket);
 
                 if(success){
-                    todolist.remove(count);
+                    stack.pop();
                     DBHelper.get(context).delete(ticket);
-                    count++;
                 } else {
                     continue;
                 }
@@ -52,7 +53,7 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
 
     }
 
-    //Todo : riaggiustare funzione connectionToServer()
+
     private boolean connectionToServer(final Ticket ticket) {
 
         String address = "http://uffizi.easyline.univaq.it/UFFIZI/api/ticket/add";
@@ -70,10 +71,11 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
                 "\",\"accuracy\":\"" + ticket.getAccuracy() +
                 "\"}";
 
-        //Map<String, Object> obj = new HashMap<String, Object>();
 
-        //creazione jsonstring
+        //creazione jsonstring con map
         /*
+        Map<String, Object> obj = new HashMap<String, Object>();
+
         try {
 
             obj.put("in_out", ticket.getIn_out());
@@ -125,6 +127,7 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
                 success = false;
             }
 
+            //stampa debug risposta server
             /*
             System.out.println("\nSending 'POST' request to URL : " + address);
             System.out.println("Post parameters : " + urlParameters);
@@ -143,7 +146,6 @@ public class ConnectionToServer extends AsyncTask<Object, Integer, Integer> {
 
             System.out.println(response.toString());
             */
-
 
         }catch(Exception e){
             e.printStackTrace();

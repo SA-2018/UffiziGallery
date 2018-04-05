@@ -11,7 +11,6 @@ import android.telephony.TelephonyManager;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.json.JSONArray;
 import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -22,7 +21,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import it.univaq.uffizigallery.CheckpointHubActivity;
 import it.univaq.uffizigallery.MainActivity;
 import it.univaq.uffizigallery.model.Checkpoint;
 import it.univaq.uffizigallery.utils.ServerAPI;
@@ -95,10 +93,7 @@ public class Services extends IntentService {
 
     }
 
-    // Todo : callback function on read barcode completed
     private void read_barcode_completed(Intent intent){
-
-        Intent response = new Intent(CheckpointHubActivity.ACTION_SCAN_COMPLETED);
 
         String barcode_data = intent.getStringExtra("barcode");
         Checkpoint checkpoint = CheckpointService.JSONtoCheckpoint(intent.getStringExtra("checkpoint"));
@@ -128,31 +123,12 @@ public class Services extends IntentService {
             String JSONString = stringWriter.toString();
             ServerAPI toServer = new ServerAPI(checkpoint, getApplicationContext());
 
-            String result = toServer.ticketAdd(JSONString);
+            toServer.ticketAdd(JSONString);
 
-            int error;
-
-            try {
-                JSONObject o = new JSONObject(result);
-                error = o.getInt("error");
-
-                if(error == 0){
-                    checkpoint.setChildsize(checkpoint.getChildsize() + 1);
-                    response.putExtra("checkpoint", checkpoint.toString());
-                } else {
-                    response.putExtra("checkpoint", checkpoint.toString());
-                }
-
-            } catch(JSONException e){
-                e.printStackTrace();
-            }
 
         }catch(SecurityException|NullPointerException|IOException|JSONException e){
             e.printStackTrace();
         }
-
-
-        LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(response);
 
     }
 

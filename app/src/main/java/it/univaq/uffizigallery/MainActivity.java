@@ -101,7 +101,6 @@ public class MainActivity extends AppCompatActivity implements SwipeRefreshLayou
                 android.R.color.holo_blue_dark);
 
 
-        // TODO : add location permission
         if ((ContextCompat.checkSelfPermission(this, Manifest.permission.CAMERA) +
                 ContextCompat.checkSelfPermission(this, Manifest.permission.INTERNET) +
                 ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) +
